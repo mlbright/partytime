@@ -15,3 +15,5 @@ if __name__ == "__main__":
     G = nx.generators.random_graphs.random_regular_graph(5,100)
     nx.draw(G)
     plt.savefig("ex.png")
+    components = nx.connected_components(G)
+    print components
