@@ -4,16 +4,12 @@ import random
 import networkx as nx
 import matplotlib.pyplot as plt
 
-def generate_test():
-    pass
-
 if __name__ == "__main__":
     T = 1
-    N = 100
-    F = 11
-    M = 1000
-    G = nx.generators.random_graphs.random_regular_graph(5,100)
+    F = random.randint(1,11)
+    N = random.randint(F+1,250)
+    M = random.randint(N-1,N*(N-1)/2)
+    G = nx.generators.random_graphs.gnm_random_graph(N,M)
+    print "F=%d N=%d M=%d" % (F,N,M)
     nx.draw(G)
     plt.savefig("ex.png")
-    components = nx.connected_components(G)
-    print components
