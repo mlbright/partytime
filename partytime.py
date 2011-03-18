@@ -19,6 +19,8 @@ class PartyTime(object):
 
     def solve(self):
         source = randint(0,self.F-1)
+        print self.total
+        print self.friends
         self.search(source,self.total,set(),self.friends.copy())
 
     def search(self,curr,cost,visited,friends):
@@ -31,10 +33,12 @@ class PartyTime(object):
                 self.best = set(visited)
                 return
         for next in self.G[curr]:
+            print "here"
             if next not in visited:
                 self.search(next,cost+self.costs[next],visited | set([next]),friends | set())
 
     def output(self):
+        print self.best
         print "%d %d" % (self.total,len(self.best))
 
 
