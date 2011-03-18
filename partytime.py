@@ -10,7 +10,8 @@ def _next_int():
 class PartyTime(object):
     
     def __init__(self,G,costs,F):
-        self.cost = sum(costs)
+        self.costs = costs
+        self.total = sum(costs)
         self.G = G
         self.F = F
         self.friends = set(range(F))
@@ -18,23 +19,23 @@ class PartyTime(object):
 
     def solve(self):
         source = randint(0,self.F-1)
-        self.search(source,self.cost,set(),self.friends.copy())
+        self.search(source,self.total,set(),self.friends.copy())
 
     def search(self,curr,cost,visited,friends):
-        if cost > self.cost:
+        if cost > self.total:
             return
         if curr in friends:
             friends.remove(curr)
             if len(friends) == 0:
-                self.cost = cost
+                self.total = cost
                 self.best = set(visited)
                 return
         for next in self.G[curr]:
             if next not in visited:
-                self.search(next,cost+self.cost[next],visited | set([next]),friends | set())
+                self.search(next,cost+self.costs[next],visited | set([next]),friends | set())
 
-    def output():
-        print "%d %d" % (self.cost,len(self.best))
+    def output(self):
+        print "%d %d" % (self.total,len(self.best))
 
 
 if __name__ == "__main__":
