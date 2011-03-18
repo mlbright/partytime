@@ -11,35 +11,39 @@ class PartyTime(object):
     
     def __init__(self,G,costs,F):
         self.costs = costs
-        self.total = sum(costs)
+        self.max_ = sum(costs)
         self.G = G
         self.F = F
-        self.friends = set(range(F))
         self.best = set(G.keys())
 
     def solve(self):
         source = randint(0,self.F-1)
-        print self.total
-        print self.friends
-        self.search(source,self.total,set(),self.friends.copy())
+        self._search(source)
 
-    def search(self,curr,cost,visited,friends):
-        if cost > self.total:
+    def _all_friends(self,visited):
+        for friend in range(self.F):
+            if friend not in visited:
+                return False
+        return True
+    
+    def _search(self,curr,cost=0,visited=set(),used=set()):
+        if cost >= self.max_:
             return
-        if curr in friends:
-            friends.remove(curr)
-            if len(friends) == 0:
-                self.total = cost
-                self.best = set(visited)
-                return
+        if self._all_friends(visited) and cost < self.max_: # and len(visited) < len(self.best):
+            print "best"
+            self.max_ = cost
+            self.best = set(used)
+            print self.max_
+            print self.best
+            return
         for next in self.G[curr]:
-            print "here"
             if next not in visited:
-                self.search(next,cost+self.costs[next],visited | set([next]),friends | set())
+                visited.add(next)
+                self._search(next,cost+self.costs[next],visited,used|set([next]))
 
     def output(self):
         print self.best
-        print "%d %d" % (self.total,len(self.best))
+        print "%d %d" % (self.max_,len(self.best))
 
 
 if __name__ == "__main__":
