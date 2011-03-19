@@ -18,21 +18,14 @@ class PartyTime(object):
         self.best_friend = randint(0,self.F-1)
         self.max_ = sum(self.costs)
         self.best = set(self.G.keys())
-        print self.max_
-        print self.best
-        self._search(self.G,self.best_friend)
+        friends = set(range(self.F))
+        self._search(self.G,self.best_friend,friends)
 
-    def _all_friends(self,curr,used):
-        for friend in range(self.F):
+    def _all_friends(self,friends,used):
+        for friend in friends:
             if friend not in used:
                 return False
         return True
-
-    def _is_friend(self,curr):
-        if curr < self.F:
-            return True
-        else:
-            return False
 
     def _collapse(self,graph,path):
 
@@ -52,24 +45,25 @@ class PartyTime(object):
 
 
 
-    def _search(self,graph,curr,cost=0,used=set(),path=set()):
+    def _search(self,graph,curr,friends,cost=0,used=set(),path=set()):
+        print friends
         if cost > self.max_:
             return
         if cost == self.max_ and len(used) >= len(self.best):
             return
-        print used
-        if self._is_friend(curr) and path:
+        if curr in friends and path:
             G = self._collapse(graph,path)
-            if self._all_friends(curr,used):
+            if self._all_friends(friends-set([curr]),used):
                 if cost <= self.max_:
                     self.max_ = cost
                     self.best = set(used)
                 return
-            self._search(G,self.best_friend,cost,used)
+            else:
+                self._search(G,self.best_friend,friends - set([curr]),cost,used)
         else:
             for next in self.G[curr]:
                 if next not in path or next < self.F:
-                    self._search(graph,next,cost+self.costs[next],used|set([next]),path|set([next]))
+                    self._search(graph,next,friends,cost+self.costs[next],used|set([next]),path|set([next]))
 
     def output(self):
         print self.best
