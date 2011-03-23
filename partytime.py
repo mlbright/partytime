@@ -3,7 +3,6 @@
 import sys
 from collections import defaultdict
 from random import randint
-import time
 
 def _next_int():
     return int(sys.stdin.readline())
@@ -11,18 +10,18 @@ def _next_int():
 class PartyTime(object):
     
     def __init__(self,G,costs,F):
-        self.costs = costs
         self.G = G
+        self.food = costs
         self.F = F
 
     def solve(self):
-        self.start = randint(0,self.F - 1)
+        friends = set(range(self.F))
+        self.start = friends.pop()
         print "%d" % (self.start)
-        self.cost = sum(self.costs)
+        self.cost = sum(self.food)
         print "%d" % (self.cost)
         self.best = set(self.G.keys())
         print self.best
-        friends = set(range(self.F))
         self._search(self.G,self.start,friends)
 
     def _collapse(self,graph,path):
@@ -46,9 +45,8 @@ class PartyTime(object):
         if cost > self.cost or (cost == self.cost and len(used) >= len(self.best)):
             return
         elif (curr in friends) and path:
-            if curr != self.start:
-                friends = friends - set([curr])
-            if len(friends) == 1:
+            friends = friends - set([curr])
+            if not friends:
                 if cost <= self.cost:
                     self.cost = cost
                     self.best = set(used)
@@ -59,7 +57,7 @@ class PartyTime(object):
         else:
             for next in graph[curr]:
                 if next not in path:
-                    self._search(graph,next,friends,cost+self.costs[next],used|set([next]),path|set([next]))
+                    self._search(graph,next,friends,cost+self.food[next],used|set([next]),path|set([next]))
 
 
     def output(self):
