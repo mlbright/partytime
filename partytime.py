@@ -15,11 +15,12 @@ class PartyTime(object):
         self.F = F
 
     def solve(self):
-        self.best_friend = randint(0,self.F-1)
-        self.max_ = sum(self.costs)
+        self.start = randint(0,self.F-1)
+        self.cost = sum(self.costs)
         self.best = set(self.G.keys())
         friends = set(range(self.F))
-        self._search(self.G,self.best_friend,friends)
+        friends = friends - set([self.start])
+        self._search(self.G,self.start,friends)
 
     def _all_friends(self,friends,used):
         for friend in friends:
@@ -29,12 +30,12 @@ class PartyTime(object):
 
     def _collapse(self,graph,path):
 
-        sink  = self.best_friend
+        sink  = self.start
         G = defaultdict(set)
 
         for s in graph:
             for d in graph[s]:
-                if d not in path and s not in path:
+                if s not in path and d not in path:
                     G[s].add(d)
                 elif s not in path and d in path:
                     G[s].add(sink)
@@ -44,30 +45,29 @@ class PartyTime(object):
         return G
 
 
-
     def _search(self,graph,curr,friends,cost=0,used=set(),path=set()):
         print friends
-        if cost > self.max_:
+        if cost > self.cost:
             return
-        if cost == self.max_ and len(used) >= len(self.best):
+        if cost == self.cost and len(used) >= len(self.best):
             return
         if curr in friends and path:
+            friends = friends - set([curr])
             G = self._collapse(graph,path)
-            if self._all_friends(friends-set([curr]),used):
-                if cost <= self.max_:
-                    self.max_ = cost
+            if self._all_friends(friends,used):
+                if cost <= self.cost:
+                    self.cost = cost
                     self.best = set(used)
                 return
-            else:
-                self._search(G,self.best_friend,friends - set([curr]),cost,used)
+            self._search(G,self.start,friends,cost,used)
         else:
-            for next in self.G[curr]:
+            for next in graph[curr]:
                 if next not in path or next < self.F:
                     self._search(graph,next,friends,cost+self.costs[next],used|set([next]),path|set([next]))
 
     def output(self):
         print self.best
-        print "%d %d" % (self.max_,len(self.best))
+        print "%d %d" % (self.cost,len(self.best))
 
 
 if __name__ == "__main__":
