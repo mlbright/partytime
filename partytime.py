@@ -3,6 +3,7 @@
 import sys
 from collections import defaultdict
 from random import randint
+import time
 
 def _next_int():
     return int(sys.stdin.readline())
@@ -15,18 +16,14 @@ class PartyTime(object):
         self.F = F
 
     def solve(self):
-        self.start = randint(0,self.F-1)
+        self.start = randint(0,self.F - 1)
+        print "%d" % (self.start)
         self.cost = sum(self.costs)
+        print "%d" % (self.cost)
         self.best = set(self.G.keys())
+        print self.best
         friends = set(range(self.F))
-        friends = friends - set([self.start])
         self._search(self.G,self.start,friends)
-
-    def _all_friends(self,friends,used):
-        for friend in friends:
-            if friend not in used:
-                return False
-        return True
 
     def _collapse(self,graph,path):
 
@@ -46,24 +43,24 @@ class PartyTime(object):
 
 
     def _search(self,graph,curr,friends,cost=0,used=set(),path=set()):
-        print friends
-        if cost > self.cost:
+        if cost > self.cost or (cost == self.cost and len(used) >= len(self.best)):
             return
-        if cost == self.cost and len(used) >= len(self.best):
-            return
-        if curr in friends and path:
-            friends = friends - set([curr])
-            G = self._collapse(graph,path)
-            if self._all_friends(friends,used):
+        elif (curr in friends) and path:
+            if curr != self.start:
+                friends = friends - set([curr])
+            if len(friends) == 1:
                 if cost <= self.cost:
                     self.cost = cost
                     self.best = set(used)
+                    print self.cost
+                    print self.best
                 return
-            self._search(G,self.start,friends,cost,used)
+            self._search(self._collapse(graph,path),self.start,friends,cost,used)
         else:
             for next in graph[curr]:
-                if next not in path or next < self.F:
+                if next not in path:
                     self._search(graph,next,friends,cost+self.costs[next],used|set([next]),path|set([next]))
+
 
     def output(self):
         print self.best
