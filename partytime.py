@@ -14,16 +14,6 @@ class PartyTime(object):
         self.food = costs
         self.F = F
 
-    def solve(self):
-        friends = set(range(self.F))
-        self.start = friends.pop()
-        print "%d" % (self.start)
-        self.cost = sum(self.food)
-        print "%d" % (self.cost)
-        self.best = set(self.G.keys())
-        print self.best
-        self._search(self.G,self.start,friends)
-
     def _collapse(self,graph,path):
 
         sink  = self.start
@@ -40,24 +30,39 @@ class PartyTime(object):
     
         return G
 
+    def solve(self):
+        self.friends = set(range(self.F))
+        self.start = self.friends.pop()
+        print "%d" % (self.start)
+        self.cost = sum(self.food)
+        print "%d" % (self.cost)
+        self.best = set(self.G.keys())
+        print self.best
+        self._search(self.G,self.start)
 
-    def _search(self,graph,curr,friends,cost=0,used=set(),path=set()):
-        if cost > self.cost or (cost == self.cost and len(used) >= len(self.best)):
+    def _search(self,graph,curr,cost=0,used=set(),path=set()):
+        if cost >= self.cost:
             return
-        elif (curr in friends) and path:
-            friends = friends - set([curr])
-            if not friends:
+        used.add(curr)
+        if curr in self.friends:
+            if self.friends.issubset(used):
                 if cost <= self.cost:
                     self.cost = cost
                     self.best = set(used)
-                    print self.cost
-                    print self.best
                 return
-            self._search(self._collapse(graph,path),self.start,friends,cost,used)
+            self._search(self._collapse(graph,path),self.start,cost,used)
         else:
             for next in graph[curr]:
-                if next not in path:
-                    self._search(graph,next,friends,cost+self.food[next],used|set([next]),path|set([next]))
+                if next not in used:
+                    self._search(graph,next,cost+self.food[next],used,path|set([curr]))
+
+
+    def _search_dfs(self,graph,curr,cost=0,used=set(),path=set()):
+        used.add(curr)
+        print "%d" % (curr)
+        for next in graph[curr]:
+            if next not in used:
+                self._search(graph,next,cost+self.food[next],used,path|set([curr]))
 
 
     def output(self):
