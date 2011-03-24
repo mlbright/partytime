@@ -14,7 +14,7 @@ class PartyTime(object):
         self.food = costs
         self.F = F
 
-    def _collapse(self,graph,path):
+    def _collapse(self,graph,sol,path):
 
         sink  = self.start
         G = defaultdict(set)
@@ -28,41 +28,32 @@ class PartyTime(object):
                 elif s in path and d not in path:
                     G[sink].add(d)
     
-        return G
+        return G, sol | path
 
     def solve(self):
         self.friends = set(range(self.F))
         self.start = self.friends.pop()
-        print "%d" % (self.start)
+        self.friends.add(self.start)
         self.cost = sum(self.food)
-        print "%d" % (self.cost)
         self.best = set(self.G.keys())
-        print self.best
         self._search(self.G,self.start)
 
-    def _search(self,graph,curr,cost=0,used=set(),path=set()):
+    def _search(self,graph,curr,cost=0,sol=set(),path=set()):
         if cost >= self.cost:
             return
-        used.add(curr)
-        if curr in self.friends:
-            if self.friends.issubset(used):
+        if curr in self.friends and path:
+            print "here"
+            if self.friends.issubset(sol):
                 if cost <= self.cost:
                     self.cost = cost
-                    self.best = set(used)
+                    self.best = set(sol)
                 return
-            self._search(self._collapse(graph,path),self.start,cost,used)
+            _graph,_sol = self._collapse(graph,sol,path)
+            self._search(_graph,self.start,cost,_sol)
         else:
             for next in graph[curr]:
-                if next not in used:
-                    self._search(graph,next,cost+self.food[next],used,path|set([curr]))
-
-
-    def _search_dfs(self,graph,curr,cost=0,used=set(),path=set()):
-        used.add(curr)
-        print "%d" % (curr)
-        for next in graph[curr]:
-            if next not in used:
-                self._search(graph,next,cost+self.food[next],used,path|set([curr]))
+                if next not in path:
+                    self._search(graph,next,cost+self.food[curr],sol,path|set([curr]))
 
 
     def output(self):
