@@ -7,6 +7,9 @@ from random import randint
 def _next_int():
     return int(sys.stdin.readline())
 
+def _add(s,e):
+    return s | set([e])
+
 def _collapse(sink,graph,path):
     G = defaultdict(set)
     for s in graph:
@@ -32,17 +35,24 @@ class PartyTime(object):
         self.friends.add(self.start)
         self.cost = sum(self.food)
         self.best = set(self.G.keys())
-        self._search(self.G,self.start)
+        self._search(self.G,self.start,self.food[self.start],set([self.start]),set(),[self.start])
 
-    def _search(self,graph,curr,visited=set(),sol=set(),path=set()):
-        visited.add(curr)
-        for next in graph[curr]:
-            """
-            if next in self.friends:
-                self._search(_collapse(self.start,graph,path),self.start)
-            """
-            if next not in visited:
-                self._search(graph,next,visited,sol,path|set([curr]))
+    def _search(self,graph,curr,cost=0,used=set(),edges=set(),path=[]):
+        if cost >= self.cost:
+            return        
+        if curr in self.friends and len(path) > 1:
+            print used
+            if self.friends.issubset(used):
+                self.cost = cost
+                self.best = set(used)
+                return
+            return
+            _graph = _collapse(self.start,graph,set(path))
+            self._search(_graph,self.start,cost,edges)
+        else:
+            for next in graph[curr]:
+                if next not in path or next in self.friends:
+                    self._search(graph,next,cost+self.food[next],_add(used,next),_add(edges,(curr,next)),path+[next])
 
     def output(self):
         print self.best
