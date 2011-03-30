@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 import sys
-from random import randint
 import time
 
 def _next_int():
