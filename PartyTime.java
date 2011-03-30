@@ -16,19 +16,18 @@ import java.util.concurrent.Future;
 public class PartyTime implements Runnable {
     class Solver implements Runnable {
         int testId;
-        int input;
         int res;
         boolean failed = false;
-
-        Solver(int testId) {
-            this.testId = testId;
-        }
-
         int n;
         int f;
         int m;
         boolean[][] friends;
         int[] food;
+        int finalRes;
+
+        Solver(int testId) {
+            this.testId = testId;
+        }
 
         private void readInput() {
             n = nextInt();
@@ -45,7 +44,6 @@ public class PartyTime implements Runnable {
             for (int i = 0; i < n; ++i) food[i] = nextInt() * 1000 + 1;
         }
 
-        int finalRes;
 
         public void run() {
             int[][] d = new int[n][n];
