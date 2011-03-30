@@ -1,5 +1,5 @@
 import sys
-from random import randint
+from random import randint, shuffle
 import networkx as nx
 import matplotlib.pyplot as plt
 
@@ -17,7 +17,10 @@ if __name__ == "__main__":
     print N
     print F
     print M
+    
+    remapping = range(N)
+    shuffle(remapping)
     for (u,v) in G.edges_iter():
-        print "%d %d" % (u,v)
+        print "%d %d" % (remapping[u],remapping[v])
     for _ in xrange(G.number_of_nodes()):
         print "%d" % (randint(0,1000))
