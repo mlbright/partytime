@@ -3,18 +3,20 @@
 import sys
 import time
 
+MAX = sys.maxint
+
 def _next_int():
     return int(sys.stdin.readline())
 
 class PartyTime(object):
 
     def __init__(self):
-        self.final = sys.maxint
+        self.final = MAX
     
     def run(self):
         N = self.N
         F = self.F
-        d = [ [ sys.maxint for i in range(N) ] for j in range(N) ]
+        d = [ [ MAX for i in range(N) ] for j in range(N) ]
         for i in range(N):
             for j in range(N):
                 if i != j:
@@ -26,9 +28,9 @@ class PartyTime(object):
                 for j in range(N):
                     d[i][j] = min(d[i][j], d[i][k] + d[k][j])
 
-        best = [[sys.maxint] * N]
+        best = [[MAX] * N]
         for set in xrange(1, 1 << F):
-            best.append([sys.maxint] * N)
+            best.append([MAX] * N)
             if (set & (set - 1)) == 0:
                 first = 0
                 while (set & (1 << first)) == 0:
