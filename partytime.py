@@ -77,10 +77,10 @@ class PartyTime(object):
 
 if __name__ == "__main__":
 
-    t1 = time.time()
+    #t1 = time.time()
     solver = PartyTime()
     solver.input()
     solver.run()
     solver.output()
-    t2 = time.time()
-    print "%.2f" % (t2 - t1)
+    #t2 = time.time()
+    #print "%.2f" % (t2 - t1)
